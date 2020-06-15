@@ -47,4 +47,41 @@ export class BlogController {
 
     return res.status(HttpStatus.OK).json(posts);
   }
+
+  // edit a particular post using ID
+  @Put('/edit')
+  async editPost(
+    @Res() res,
+    @Query('postID', new ValidateObjectId()) postID,
+    @Body() CreatePostDTO: CreatePostDTO,
+  ) {
+    const editedPost = await this.blogService.editPost(postID, CreatePostDTO);
+
+    if (!editedPost) {
+      throw new NotFoundException('Post does not exist!');
+    }
+
+    return res.status(HttpStatus.OK).json({
+      message: 'Post has been successfully updated',
+      post: editedPost,
+    });
+  }
+
+  // Delete a post using post ID
+  @Delete('/delete')
+  async deletePost(
+    @Res() res,
+    @Query('postID', new ValidateObjectId()) postID,
+  ) {
+    const deletedPost = await this.blogService.deletePost(postID);
+
+    if (!deletedPost) {
+      throw new NotFoundException('Post does not exist!');
+    }
+
+    return res.status(HttpStatus.OK).json({
+      message: 'Post has been deleted!',
+      post: deletedPost,
+    });
+  }
 }
